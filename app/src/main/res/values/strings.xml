@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Gym</string>
+    <string name="title_activity_coach">CoachActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>

@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ClientRegistration extends AppCompatActivity {
+public class ClientRegistration extends AppCompatActivity
+{
 
     Button button_register;
     EditText name, phone, username, password;
@@ -29,9 +30,9 @@ public class ClientRegistration extends AppCompatActivity {
         button_register=findViewById(R.id.button5);
 
 
-        name=findViewById(R.id.editText10);
-        phone=findViewById(R.id.editText11);
-        password=findViewById(R.id.editText13);
+        name=(EditText) findViewById(R.id.editText10);
+        phone=(EditText)findViewById(R.id.editText11);
+        password=(EditText)findViewById(R.id.editText13);
 
        final Spinner spinner6= (Spinner)findViewById(R.id.spinner6);
 

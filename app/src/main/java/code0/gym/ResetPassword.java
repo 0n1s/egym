@@ -14,7 +14,8 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 
-public class ResetPassword extends AppCompatActivity {
+public class ResetPassword extends AppCompatActivity
+{
 EditText username, password;
 
     @Override
@@ -22,10 +23,15 @@ EditText username, password;
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
-        username =  findViewById(R.id.editText15);
-        password= findViewById(R.id.editText16);
+        username = (EditText) findViewById(R.id.editText15);
+
+        password= (EditText)findViewById(R.id.editText16);
         final int selected_item = Integer.parseInt(getIntent().getStringExtra("selected"));
 
+        if(selected_item==1)
+        {
+            username.setHint("Enter your id number ");
+        }
  findViewById(R.id.button7).setOnClickListener(new View.OnClickListener() {
      @Override
      public void onClick(View v) {
@@ -38,8 +44,6 @@ EditText username, password;
 
     public void reset_password(final String username, final String password , final int selected_item)
     {
-
-
         class GetJSON extends AsyncTask<Void, Void, String> {
 
             ProgressDialog progressDialog = new ProgressDialog(ResetPassword.this);
@@ -120,11 +124,10 @@ EditText username, password;
         }
         GetJSON jj =new GetJSON();
         jj.execute();
-
-
     }
 
-    public void sendSMS(String phoneNo, String msg) {
+    public void sendSMS(String phoneNo, String msg)
+    {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, msg, null, null);

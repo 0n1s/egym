@@ -143,6 +143,7 @@ getSupportActionBar().setTitle("Available Coaches");
 
     private void showthem(String s) {
 
+       // new AlertDialog.Builder(ClientActivity.this).setMessage(s).show();
        // Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
         JSONObject jsonObject = null;

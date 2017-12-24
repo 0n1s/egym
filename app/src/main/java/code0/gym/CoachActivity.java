@@ -172,7 +172,6 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
                 super.onPostExecute(s);
                 progressDialog.dismiss();
                 showthem(s);
-                //Toast.makeText(CoachActivity.this, s, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -232,8 +231,10 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
 
 
 
-    private void showthem(String s) {
+    private void showthem(String s)
+    {
 
+        //new AlertDialog.Builder(CoachActivity.this).setMessage(s).show();
         JSONObject jsonObject = null;
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +25,8 @@ public class AdminActivity extends AppCompatActivity
     ListView listView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
         getSupportActionBar().setTitle("Admin Panel");
@@ -42,11 +45,63 @@ public class AdminActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
-                final  String itemid =   map.get("id");
+                final  String coach_id =   map.get("id");
+
+
+
+                new AlertDialog.Builder(AdminActivity.this).setTitle("Please confirm").setMessage("Do you want to delete the selected user?")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteUser(coach_id);
+                            }
+                        }).show();
+
+
             }});
 
     }
 
+
+
+    public void deleteUser(final String username)
+    {
+        class GetJSON extends AsyncTask<Void, Void, String> {
+
+            ProgressDialog progressDialog = new ProgressDialog(AdminActivity.this);
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog.setMessage("Fetching data...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
+            @Override
+            protected String doInBackground(Void... params) {
+                RequestHandler rh = new RequestHandler();
+                HashMap<String, String> employees = new HashMap<>();
+                employees.put("owner_id", "");
+                String res=rh.sendPostRequest(URLs.main+"deletecoach.php?username="+username,employees);
+                return res;
+
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                progressDialog.dismiss();
+                //showthem(s);
+                 Toast.makeText(AdminActivity.this, s, Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        }
+        GetJSON jj =new GetJSON();
+        jj.execute();
+    }
 
 
     public void getJSON()
@@ -92,6 +147,7 @@ public class AdminActivity extends AppCompatActivity
 
     private void showthem(String s) {
 
+        //new AlertDialog.Builder(AdminActivity.this).setMessage(s).show();
         JSONObject jsonObject = null;
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

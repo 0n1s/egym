@@ -45,10 +45,10 @@ public class ClientBook extends AppCompatActivity {
 
        // Toast.makeText(this, user_id, Toast.LENGTH_SHORT).show();
 
-        amt=findViewById(R.id.editText9);
+        amt=(EditText)findViewById(R.id.editText9);
         amt.setText(price);
 
-        editText14=findViewById(R.id.editText14);
+        editText14=(EditText)findViewById(R.id.editText14);
         button4=(Button)findViewById(R.id.button4);
 
         TextView t16= (TextView)findViewById(R.id.textView16);
@@ -61,7 +61,7 @@ public class ClientBook extends AppCompatActivity {
 
         final EditText sItems2 = (EditText) findViewById(R.id.spinner5);
         final Spinner sItems = (Spinner) findViewById(R.id.spinner4);
-        final Spinner spinner=findViewById(R.id.spinner3);
+        final Spinner spinner=(Spinner)findViewById(R.id.spinner3);
 
 
         List<String> spinnerArray1 =  new ArrayList<String>();

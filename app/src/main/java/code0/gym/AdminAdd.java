@@ -22,39 +22,38 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AdminAdd extends AppCompatActivity {
-EditText coach_name, id_number, email_adress, telephone_number;
+EditText coach_name, id_number, email_adress, telephone_number, editText19;
     Button reg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add);
-
         getSupportActionBar().setTitle("Register a coach");
-
-
-
         List<String> spinnerArray =  new ArrayList<String>();
         spinnerArray.add("Gender");
         spinnerArray.add("Male");
         spinnerArray.add("Female");
-
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         final Spinner sItems = (Spinner) findViewById(R.id.spinner);
         sItems.setAdapter(adapter);
-
         coach_name=(EditText)findViewById(R.id.editText3);
         id_number=(EditText)findViewById(R.id.editText4);
         email_adress=(EditText)findViewById(R.id.editText5);
         telephone_number=(EditText)findViewById(R.id.editText6);
         reg=(Button)findViewById(R.id.button2);
 
-        reg.setOnClickListener(new View.OnClickListener() {
+        reg.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+
+                EditText surname = (EditText)findViewById(R.id.editText19);
+                EditText lastname= (EditText)findViewById(R.id.editText20);
+                String last_name = lastname.getText().toString();
+                String suerna = surname.getText().toString();
                 String name=coach_name.getText().toString();
                 String idnum=id_number.getText().toString();
                 String email=email_adress.getText().toString();
@@ -64,7 +63,7 @@ EditText coach_name, id_number, email_adress, telephone_number;
 
                if(verify(tel, email,idnum))
                {
-                   register(name, idnum, email, tel, gender);
+                   register(name, idnum, email, tel, gender,last_name,suerna);
                }
 
 
@@ -115,7 +114,7 @@ EditText coach_name, id_number, email_adress, telephone_number;
         }
     }
 
-   public void register(final String name, final String idnum, final String email, final String tel, final String gender)
+   public void register(final String name, final String idnum, final String email, final String tel, final String gender,final String last_name, final String surname)
     {
         class GetJSON extends AsyncTask<Void, Void, String> {
 
@@ -138,6 +137,9 @@ EditText coach_name, id_number, email_adress, telephone_number;
                 RequestHandler rh = new RequestHandler();
                 HashMap<String, String> paramms = new HashMap<>();
                 paramms.put("name", name);
+                paramms.put("last_name", last_name);
+                paramms.put("surname", surname);
+                paramms.put("name", name);
                 paramms.put("id", idnum);
                 paramms.put("email", email);
                 paramms.put("gender", gender);
@@ -151,6 +153,8 @@ EditText coach_name, id_number, email_adress, telephone_number;
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 pDialog.dismiss();
+
+                //Toast.makeText(AdminAdd.this, "result" +s, Toast.LENGTH_SHORT).show();
 
                 if(s.equals("1"))
                 {

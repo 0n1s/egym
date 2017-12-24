@@ -27,30 +27,20 @@ public class ClientRegistration extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_registration);
 
-        button_register=findViewById(R.id.button5);
+        button_register=(Button)findViewById(R.id.button5);
 
 
         name=(EditText) findViewById(R.id.editText10);
         phone=(EditText)findViewById(R.id.editText11);
         password=(EditText)findViewById(R.id.editText13);
-
-       final Spinner spinner6= (Spinner)findViewById(R.id.spinner6);
-
-        //ArrayList<String, String>arrayList;
-
-
+        final Spinner spinner6= (Spinner)findViewById(R.id.spinner6);
         List<String> spinnerArray =  new ArrayList<String>();
         spinnerArray.add("Male");
         spinnerArray.add("Female");
-
-
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner6.setAdapter(adapter);
-
         button_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,9 +50,10 @@ public class ClientRegistration extends AppCompatActivity
 
                 if(verify(phonne))
                 {
-                    EditText lnmae= findViewById(R.id.editText17);
-                    EditText surname=findViewById(R.id.editText18);
-                    Register(name.getText().toString() + lnmae.getText().toString()+" " + surname.getText().toString(),
+                    EditText lnmae= (EditText)findViewById(R.id.editText17);
+                    EditText surname=(EditText)findViewById(R.id.editText18);
+                    Register(name.getText().toString(),
+                            lnmae.getText().toString(),surname.getText().toString(),
                             phone.getText().toString(),
                             password.getText().toString(),
                             spinner6.getSelectedItem().toString()
@@ -88,7 +79,7 @@ public class ClientRegistration extends AppCompatActivity
 
          return istrue;
      }
-     public  void Register(final String name, final String phone, final String password, final String gender)
+     public  void Register(final String name, final String last_name, final String surname, final String phone, final String password, final String gender)
      {
          class GetJSON extends AsyncTask<Void, Void, String> {
 
@@ -109,6 +100,8 @@ public class ClientRegistration extends AppCompatActivity
                  RequestHandler rh = new RequestHandler();
                  HashMap<String, String> paramms = new HashMap<>();
                  paramms.put("name", name);
+                 paramms.put("last_name", last_name);
+                 paramms.put("surname", surname);
                  paramms.put("gender", gender);
                  paramms.put("phone", phone);
                  paramms.put("password", password);
@@ -121,6 +114,16 @@ public class ClientRegistration extends AppCompatActivity
              protected void onPostExecute(String s) {
                  super.onPostExecute(s);
                  pDialog.dismiss();
+
+                 AlertDialog.Builder alertDialogBuildeir = new AlertDialog.Builder(ClientRegistration.this);
+                 alertDialogBuildeir.setTitle("Attention!").setMessage(s)
+                         .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                             @Override
+                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                             }
+                         })
+                         .setCancelable(true);
 
                  if(s.equals("1"))
                  {

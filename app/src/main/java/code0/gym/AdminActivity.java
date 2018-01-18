@@ -41,7 +41,10 @@ public class AdminActivity extends AppCompatActivity
 
         getJSON();
         listView=(ListView)findViewById(R.id.listview);
-        listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+
+
+        listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener()
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
@@ -94,7 +97,7 @@ public class AdminActivity extends AppCompatActivity
                 progressDialog.dismiss();
                 //showthem(s);
                  Toast.makeText(AdminActivity.this, s, Toast.LENGTH_SHORT).show();
-
+                getJSON();
             }
 
 

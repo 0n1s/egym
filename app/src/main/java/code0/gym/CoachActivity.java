@@ -11,7 +11,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,6 +34,12 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
     EditText date, time, amt;
     ListView listView;
     Button save,button6;
+
+
+    EditText editText21;
+    Button button8;
+
+
     EditText editText12;
     String username;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -51,6 +59,26 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
         editText12=(EditText)findViewById(R.id.editText12);
         save = (Button) findViewById(R.id.button3);
         button6=(Button)findViewById(R.id.button6);
+
+editText21= (EditText)findViewById(R.id.editText21);
+
+String loc = sharedpreferences.getString("loc", "not set");
+editText21.setText(loc);
+button8 =(Button)findViewById(R.id.button8);
+
+button8.setOnClickListener(new View.OnClickListener()
+{
+    @Override
+    public void onClick(View v) {
+        String location =  editText21.getText().toString();
+        SharedPreferences.Editor gedit = sharedpreferences.edit();
+        gedit.putString("loc", location);
+        gedit.commit();
+        save_location(location, username);
+
+    }
+});
+
 
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +102,55 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
             }
         });
         listView = (ListView) findViewById(R.id.listview1);
+
+
+        listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
+                final  String booked =   map.get("booked");
+
+                final String booked_data = map.get("booked_data");
+
+               // Toast.makeText(CoachActivity.this, booked, Toast.LENGTH_SHORT).show();
+                if(booked.equals("true"))
+                {
+                    try {
+                        JSONArray jsonArray = new JSONArray(booked_data);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                        String telephone = jsonObject.getString("telephone_number");
+                        String name = jsonObject.getString("name");
+                        String location  = jsonObject.getString("location");
+
+                       // Toast.makeText(CoachActivity.this, location, Toast.LENGTH_SHORT).show();
+                        if(location.isEmpty())
+                        {
+                            location = sharedpreferences.getString("loc", "not set");
+
+                        }
+
+
+                        new AlertDialog.Builder(CoachActivity.this).setTitle("Client data").setMessage(
+                                "Client name \n"+name
+                                +" \nClient phone \n"+telephone+"\nLocation \n"+location
+
+                        ).setNegativeButton("Okay", null).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+                }
+                else
+                    Toast.makeText(CoachActivity.this, "Not booked", Toast.LENGTH_SHORT).show();
+
+
+
+            }});
 
         time = (EditText) findViewById(R.id.editText8);
 
@@ -114,8 +191,6 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
                     editor.putString("amt",String.valueOf(ammount));
                     editor.commit();
                     Toast.makeText(CoachActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-
-
                    // save_price(username,amt.trim());
 
                 }
@@ -140,6 +215,46 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
         time.setText(String.valueOf(i) + ":" + String.valueOf(i1));
     }
 
+    public void save_location(final String location, final String user)
+    {
+        class GetJSON extends AsyncTask<Void, Void, String> {
+
+            ProgressDialog progressDialog = new ProgressDialog(CoachActivity.this);
+
+            @Override
+            protected void onPreExecute()
+            {
+                super.onPreExecute();
+                progressDialog.setMessage("Saving location...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... params)
+            {
+                RequestHandler rh = new RequestHandler();
+                HashMap<String, String> employees = new HashMap<>();
+                employees.put("coach_id", user);
+                employees.put("location", location);
+                String res = rh.sendPostRequest(URLs.main + "saveloc.php", employees);
+                return res;
+            }
+
+            @Override
+            protected void onPostExecute(String s)
+            {
+                super.onPostExecute(s);
+                progressDialog.dismiss();
+                new AlertDialog.Builder(CoachActivity.this).setMessage(s).setTitle(" Information !").show();
+                Log.d("location", s);
+            }
+
+
+        }
+        GetJSON jj = new GetJSON();
+        jj.execute();
+    }
 
     public void getJSON(final String coach_id)
     {
@@ -172,7 +287,7 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
                 super.onPostExecute(s);
                 progressDialog.dismiss();
                 showthem(s);
-
+                Log.d("booked_data",s);
             }
 
 
@@ -248,12 +363,39 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
 
 
                 succes = jo.getString("success");
-                if (succes.equals("1")) {
+                if (succes.equals("1"))
+                {
                     String datetime;
                     datetime = jo.getString("datetime");
                     HashMap<String, String> employees = new HashMap<>();
+                    String booked= jo.getString("booked");
+                    String booked_data = jo.getString("booked_data");
                     employees.put("datetime", datetime);
+                    employees.put("booked", booked);
+                    employees.put("booked_data", booked_data);
                     list.add(employees);
+
+
+
+
+
+                    /*
+
+
+                    "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0726442087",
+               "name":"Maureen"
+            }
+         ],
+                     */
+
+
+
+
+
+
                 } else {
 
                 }
@@ -281,3 +423,71 @@ public class CoachActivity extends AppCompatActivity implements DatePickerDialog
 
 
 }
+
+
+/*
+
+
+
+{
+   "result":[
+      {
+         "datetime":"2017-07-01 17:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0728785744",
+               "name":"Joel Momanyi Joseph"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-24 17:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0728785744",
+               "name":"Joel Momanyi Joseph"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-01 18:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-04 18:00:00",
+         "coach_name":"Maureen",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0726442087",
+               "name":"Maureen"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      }
+   ]
+}
+ */

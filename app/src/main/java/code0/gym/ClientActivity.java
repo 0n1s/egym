@@ -32,30 +32,16 @@ ListView listView;
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
-
-
-
         Intent intent = getIntent();
         user_id=intent.getStringExtra("username");
         listView=(ListView)findViewById(R.id.listview);
         getJSON();
-
 getSupportActionBar().setTitle("Available Coaches");
-
-        /*
-        eti payment should be working during progress, apo kwa payment itakuwa two types(gold and silver) so
-        if a person is willing to pay gold class then he is considered first.. if they are more than one for gold
-         we use FCFS nd the other one is rescheduled
-         */
-
-
-        listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener()
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-
-                HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
+    HashMap<String,String> map =(HashMap)parent.getItemAtPosition(position);
 
                 final  String coach_phone =   map.get("coach_phone");
                 final  String coach_name=map.get("coach_name");
@@ -79,15 +65,6 @@ getSupportActionBar().setTitle("Available Coaches");
 
 
     }
-
-
-
-    /*
-
-
-
-     */
-
 
 
 
@@ -123,17 +100,8 @@ getSupportActionBar().setTitle("Available Coaches");
                 super.onPostExecute(s);
                 progressDialog.dismiss();
                 showthem(s);
-                //Toast.makeText(Utensils.this, s, Toast.LENGTH_SHORT).show();
 
             }
-
-
-            /*
-           eti payment should be working during progress,
-           apo kwa payment itakuwa two types(gold and silver)
-            so if a person is willing to pay gold class then he is considered first..
-            if they are more than one for gold we use FCFS nd the other one is rescheduled
-             */
 
         }
         GetJSON jj = new GetJSON();
@@ -142,9 +110,6 @@ getSupportActionBar().setTitle("Available Coaches");
 
 
     private void showthem(String s) {
-
-       // new AlertDialog.Builder(ClientActivity.this).setMessage(s).show();
-       // Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 
         JSONObject jsonObject = null;
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -156,21 +121,23 @@ getSupportActionBar().setTitle("Available Coaches");
             String succes = "0";
             for (int i = 0; i < result.length(); i++) {
                 JSONObject jo = result.getJSONObject(i);
-String price;
-
+                String price;
                 succes = jo.getString("success");
-                if (succes.equals("1")) {
-                    String datetime,coach_name,coach_gender, coach_phone, id;
-id=jo.getString("id");
+                if (succes.equals("1"))
+                {
+                    String datetime,coach_name,coach_gender, coach_phone, id, aoo;
+                    id=jo.getString("id");
                     coach_name = jo.getString("coach_name");
                     price=jo.getString("price");
                     coach_gender = jo.getString("coach_gender");
                     coach_phone = jo.getString("coach_phone");
                     datetime = jo.getString("datetime");
+                    aoo = jo.getString("aoo");
 
                     HashMap<String, String> employees = new HashMap<>();
                     employees.put("id", id);
                     employees.put("price",price);
+                    employees.put("aoo", aoo);
                     employees.put("datetime", datetime);
                     employees.put("coach_phone", coach_phone);
                     employees.put("coach_gender", coach_gender);
@@ -197,10 +164,76 @@ id=jo.getString("id");
                     })
                     .setCancelable(true).show();
         }
-
         ListAdapter adapter = new SimpleAdapter(ClientActivity.this, list, R.layout.client_coach_list,
-                new String[]{"datetime","coach_phone","coach_gender","coach_name","price"}, new int[]{
-                R.id.textView37,R.id.textView36,R.id.textView35,R.id.textView20, R.id.textView40});
+                new String[]{"datetime","coach_phone","coach_gender","coach_name","price","aoo"}, new int[]{
+                R.id.textView37,R.id.textView36,R.id.textView35,R.id.textView20, R.id.textView40, R.id.textView43});
         listView.setAdapter(adapter);
     }
 }
+
+
+/*
+
+{
+   "result":[
+      {
+         "datetime":"2017-07-01 17:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0728785744",
+               "name":"Joel Momanyi Joseph"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-24 17:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0728785744",
+               "name":"Joel Momanyi Joseph"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-01 18:00:00",
+         "coach_name":"Joel Momanyi Joseph",
+         "booked":"true",
+         "booked_data":[
+
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      },
+      {
+         "datetime":"2017-07-04 18:00:00",
+         "coach_name":"Maureen",
+         "booked":"true",
+         "booked_data":[
+            {
+               "telephone_number":"0726442087",
+               "name":"Maureen"
+            }
+         ],
+         "price":"250",
+         "coach_gender":"Gender",
+         "coach_phone":"0728425838",
+         "success":"1"
+      }
+   ]
+}
+
+ */

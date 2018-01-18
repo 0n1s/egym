@@ -114,6 +114,8 @@ public class LoginActivity extends AppCompatActivity
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 progressDialog.dismiss();
+
+                //new AlertDialog.Builder(LoginActivity.this).setMessage(s).show();
              //   Toast.makeText(LoginActivity.this, s, Toast.LENGTH_SHORT).show();
               if(s.equals("1"))
               {

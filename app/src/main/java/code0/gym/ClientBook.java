@@ -27,6 +27,8 @@ public class ClientBook extends AppCompatActivity {
     EditText amt, editText14;
     String coach_phone,coach_name, timebooked, idd;
     String user_id;
+    String my_location;
+    boolean canbook= true;
     String price;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,7 +80,6 @@ public class ClientBook extends AppCompatActivity {
 
 
 
-
         List<String> spinnerArray =  new ArrayList<String>();
         spinnerArray.add("Choose your preferred mode!");
         spinnerArray.add("Host Coach");
@@ -106,7 +107,8 @@ public class ClientBook extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onNothingSelected(AdapterView<?> adapterView)
+            {
 
             }
         });
@@ -136,7 +138,6 @@ public class ClientBook extends AppCompatActivity {
 
 
         spinnerArray =  new ArrayList<String>();
-
         spinnerArray.add("Choose location");
         spinnerArray.add("GreenFields");
         spinnerArray.add("Savanna");
@@ -153,36 +154,55 @@ public class ClientBook extends AppCompatActivity {
         //sItems2.setAdapter(adapter);
         sItems2.setVisibility(View.GONE);
 
-
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
 
-                final String ammount= amt.getText().toString();
 
+                if(sItems.getSelectedItem().toString().equals("Host Coach"))
+                {
+                    my_location = sItems2.getText().toString();
+                    if(my_location.isEmpty())
+                    {
+                        sItems2.setError("Please enter your location name!");
+                        canbook = false;
+                    }
+
+                }
+                else
+                    my_location="";
+
+                final String ammount= amt.getText().toString();
                 if(ammount.isEmpty()||editText14.getText().toString().trim().length()!=10)
                 {
                     Toast.makeText(ClientBook.this, "Invalid amount or phone number!", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-
-
                     if(spinner.getSelectedItem().toString().equals("Gold"))
                     {
-
                         AlertDialog.Builder builder = new AlertDialog.Builder(ClientBook.this);
                         builder.setMessage("Are you sure want to pay "+ ammount+" ?" +
-                                "You selected GOLD package, you will be charged higher but given more priority!")
+                                "\nYou selected GOLD package, you will be charged higher but given more priority!")
                                 .setTitle("Please confirm.")
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i)
                                     {
+
+
                                         String category="GOLD";
-                                       String phone="254"+String.valueOf(Integer.parseInt(editText14.getText().toString())+200);
-                                        book(phone,coach_phone, ammount, timebooked, category);
+                                        String phone="254"+String.valueOf(Integer.parseInt(editText14.getText().toString()));
+
+                                        if(canbook)
+                                        {
+                                            book(phone,coach_phone, ammount, timebooked, category, my_location);
+                                        }
+
+
+
+
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -205,10 +225,12 @@ public class ClientBook extends AppCompatActivity {
                                         public void onClick(DialogInterface dialogInterface, int i)
                                         {
 
-
                                             String category="SILVER";
                                             String phone="254"+String.valueOf(Integer.parseInt(editText14.getText().toString()));
-                                            book(phone, coach_phone, ammount, timebooked, category);
+                                            if(canbook)
+                                            {
+                                                book(phone, coach_phone, ammount, timebooked, category, my_location);
+                                            }
                                         }
                                     })
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -223,20 +245,13 @@ public class ClientBook extends AppCompatActivity {
 
                         }
 
-
-
                 }
-
-
-
-
 
             }
         });
 
     }
-
-public void book(final String phone, final String coach_phone, final String ammt, final String time, final String category)
+public void book(final String phone, final String coach_phone, final String ammt, final String time, final String category, final String location)
 {
     class GetJSON extends AsyncTask<Void, Void, String> {
 
@@ -256,39 +271,42 @@ public void book(final String phone, final String coach_phone, final String ammt
         {
             RequestHandler rh = new RequestHandler();
             HashMap<String, String> employees = new HashMap<>();
-            employees.put("customer_id)", user_id);
+            employees.put("customer_id", user_id);
             employees.put("coach_phone", coach_phone);
-            employees.put("ammount", ammt);
+            employees.put("amount", ammt);
             employees.put("phone",phone);
             employees.put("time", time);
+            employees.put("location", location);
             employees.put("coach", idd);
             employees.put("user", user_id);
             employees.put("category", category);
+            Log.d("dta_seent", String.valueOf(employees));
             String res=rh.sendPostRequest(URLs.main+"mpesa/home.php",employees);
             return res;
 
         }
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String s)
+        {
             super.onPostExecute(s);
             progressDialog.dismiss();
 
-
-            Toast.makeText(ClientBook.this, "Result: "+s, Toast.LENGTH_SHORT).show();
-
-//            if (s.substring(0,1).equals("1"))
-//            {
-//                new AlertDialog.Builder(ClientBook.this)
-//                        .setMessage("Your request has been received")
-//                        .show();
-//
-//            }
-//            else
-//            {
-//                new AlertDialog.Builder(ClientBook.this)
-//                        .setMessage("Request failed!")
-//                        .show();
-//            }
+            Log.d("data", s);
+           // new AlertDialog.Builder(ClientBook.this).setMessage(s).show();
+            //Toast.makeText(ClientBook.this, "Result: "+s, Toast.LENGTH_SHORT).show();
+            if (s.substring(0,1).equals("1"))
+            {
+                new AlertDialog.Builder(ClientBook.this)
+                        .setMessage("Your request has been received. Pending for payment confirmation.")
+                        .setNegativeButton("okay", null)
+                        .show();
+            }
+            else
+            {
+                new AlertDialog.Builder(ClientBook.this)
+                        .setMessage("Request failed!")
+                        .show();
+            }
 
         }
 

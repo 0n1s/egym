@@ -5,5 +5,5 @@ package code0.gym;
  */
 
 public class URLs {
-    public static String main="http://192.168.43.245/gym/";
+    public static String main="http://192.168.43.2/gym/";
 }
